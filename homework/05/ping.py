@@ -1,21 +1,20 @@
 import asyncio
-from asgiref.wsgi import WsgiToAsgi
-from flask import Flask
-from hypercorn.asyncio import Config, serve
+from quart import Quart
+from hypercorn.asyncio import serve
+from hypercorn.config import Config
 
-app = Flask(__name__)
+app = Quart(__name__)
 
 
-@app.route("/ping", methods=["GET"])
+@app.get("/ping")
 async def ping():
-    await logger.info(message="pong")
+    await logger.info("Received ping request - pong")
     return "pong"
 
 
-asgi_app = WsgiToAsgi(app)
-asgi_config = Config
-asgi_config.accesslog = "-"
-logger = asgi_config.logger_class(asgi_config())
+config = Config()
+config.accesslog = "-"
+logger = config.logger_class(config)
 
 if __name__ == "__main__":
-    asyncio.run(serve(asgi_app, asgi_config()))
+    asyncio.run(serve(app, config))

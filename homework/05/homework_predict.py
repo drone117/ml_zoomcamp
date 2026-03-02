@@ -34,7 +34,11 @@ customer = {
 }
 
 # Create a feature matrix based on customer
-print(f"Predicting customer:\n {'\n '.join(f'{k}: {v}' for k, v in customer.items())}")
-X = dv.transform([customer])
-y_pred = model.predict_proba(X)  # 38% to churn
-print(f"Churn rate for prediction is {y_pred[0][1]:.2%}")
+def predict(customer: dict):
+    print(f"Predicting customer:\n {'\n '.join(f'{k}: {v}' for k, v in customer.items())}")
+    X = dv.transform([customer])
+    y_pred = model.predict_proba(X)[0, 1]  # 38% to churn
+    print(f"Churn rate for prediction is {y_pred:.2%}")
+    return y_pred
+
+predict(customer)
